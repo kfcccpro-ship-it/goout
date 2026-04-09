@@ -1,0 +1,1229 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>외출·외박 신청 | MG인재개발원</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css"/>
+<script src="https://unpkg.com/docx@7.8.2/build/index.js"></script>
+<style>
+:root{
+  --bg-white:#fff;--bg-gray-50:#F9FAFB;--bg-gray-100:#F2F4F6;
+  --text-primary:#191F28;--text-secondary:#4E5968;--text-tertiary:#8B95A1;
+  --border-default:#E5E8EB;
+  --blue-primary:#3182F6;--blue-dark:#1B64DA;
+  --green:#05C072;--red:#F04452;--orange:#FF6B35;--purple:#7B61FF;
+  --radius-sm:8px;--radius-md:12px;--radius-lg:16px;
+  --shadow-card:0 1px 3px rgba(0,0,0,.04),0 1px 2px rgba(0,0,0,.06);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Pretendard',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  background:var(--bg-gray-50);color:var(--text-primary);-webkit-font-smoothing:antialiased;min-height:100vh;}
+.view{display:none;}.view.active{display:block;}
+.container{max-width:480px;margin:0 auto;padding:24px 20px 80px;}
+.container-wide{max-width:800px;margin:0 auto;padding:24px 20px 80px;}
+.top-bar{background:#fff;border-bottom:1px solid var(--border-default);
+  padding:0 20px;display:flex;align-items:center;height:56px;position:sticky;top:0;z-index:100;}
+.top-bar .back-btn{background:none;border:none;cursor:pointer;font-size:22px;
+  color:var(--text-secondary);margin-right:12px;padding:4px 8px;}
+.top-bar .title{font-size:17px;font-weight:600;}
+.card{background:#fff;border-radius:var(--radius-lg);padding:22px;
+  box-shadow:var(--shadow-card);margin-bottom:14px;}
+.form-group{margin-bottom:18px;}
+.form-label{font-size:14px;font-weight:600;color:var(--text-secondary);display:block;margin-bottom:6px;}
+.req{color:var(--red);margin-left:2px;}
+.form-input,.form-select,.form-textarea{
+  width:100%;padding:13px 16px;border:1.5px solid var(--border-default);
+  border-radius:var(--radius-md);font-size:15px;font-family:inherit;
+  color:var(--text-primary);background:#fff;outline:none;transition:border .15s;}
+.form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--blue-primary);}
+.form-select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%238B95A1' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 14px center;padding-right:44px;}
+.form-textarea{min-height:80px;resize:vertical;line-height:1.6;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.step-bar{display:flex;align-items:center;margin-bottom:18px;}
+.step-dot{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;
+  justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;}
+.step-dot.done{background:var(--blue-primary);color:#fff;}
+.step-dot.current{background:var(--blue-primary);color:#fff;box-shadow:0 0 0 5px #D6EAFF;}
+.step-dot.todo{background:var(--border-default);color:var(--text-tertiary);}
+.step-line{flex:1;height:2px;background:var(--border-default);}
+.step-line.done{background:var(--blue-primary);}
+.sbadge{display:inline-flex;align-items:center;gap:6px;border-radius:8px;
+  font-size:13px;font-weight:700;padding:4px 12px;margin-bottom:14px;}
+.sb-blue{background:#EBF4FF;color:var(--blue-primary);}
+.sb-purple{background:#F0E8FF;color:var(--purple);}
+.sb-orange{background:#FFF3E8;color:var(--orange);}
+.sb-green{background:#E6FBF3;color:#038C54;}
+.sb-gray{background:#F2F4F6;color:var(--text-secondary);}
+.ret-track{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;}
+.track-btn{padding:12px 10px;border:2px solid var(--border-default);border-radius:var(--radius-md);
+  text-align:center;cursor:pointer;font-size:14px;font-weight:600;
+  color:var(--text-secondary);background:#fff;transition:all .15s;line-height:1.4;}
+.track-btn.active{border-color:var(--blue-primary);background:#EBF4FF;color:var(--blue-primary);}
+.btn-primary{display:flex;align-items:center;justify-content:center;gap:8px;
+  width:100%;padding:16px;background:var(--blue-primary);color:#fff;border:none;
+  border-radius:var(--radius-md);font-size:16px;font-weight:700;cursor:pointer;transition:.15s;}
+.btn-primary:hover{background:var(--blue-dark);}
+.btn-secondary{display:flex;align-items:center;justify-content:center;
+  width:100%;padding:14px;background:var(--bg-gray-100);color:var(--text-primary);
+  border:none;border-radius:var(--radius-md);font-size:15px;font-weight:600;cursor:pointer;}
+.btn-sm{display:inline-flex;align-items:center;gap:5px;padding:7px 13px;
+  border:none;border-radius:var(--radius-sm);font-size:13px;font-weight:600;cursor:pointer;}
+.btn-blue-sm{background:#EBF4FF;color:var(--blue-primary);}
+.btn-red-sm{background:#FFF0F1;color:var(--red);}
+.btn-green-sm{background:#E6FBF3;color:#038C54;}
+.home-hero{text-align:center;padding:36px 0 20px;}
+.home-hero h1{font-size:26px;font-weight:700;line-height:1.35;}
+.menu-card{background:#fff;border-radius:var(--radius-lg);padding:20px 22px;
+  box-shadow:var(--shadow-card);display:flex;align-items:center;gap:16px;
+  cursor:pointer;border:2px solid transparent;transition:all .15s;margin-bottom:12px;}
+.menu-card:hover{border-color:var(--blue-primary);transform:translateY(-1px);}
+.menu-card .icon-wrap{width:50px;height:50px;border-radius:14px;display:flex;
+  align-items:center;justify-content:center;font-size:26px;flex-shrink:0;}
+.mc-title{font-size:17px;font-weight:700;margin-bottom:3px;}
+.mc-desc{font-size:13px;color:var(--text-secondary);}
+.filter-bar{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;}
+.filter-bar input,.filter-bar select{padding:10px 14px;border:1.5px solid var(--border-default);
+  border-radius:var(--radius-md);font-size:14px;font-family:inherit;outline:none;background:#fff;}
+.filter-bar input:focus,.filter-bar select:focus{border-color:var(--blue-primary);}
+.filter-bar input[type=text]{flex:1;min-width:140px;}
+.admin-table-wrap{overflow-x:auto;border-radius:var(--radius-md);border:1px solid var(--border-default);background:#fff;}
+.admin-table{width:100%;border-collapse:collapse;font-size:14px;}
+.admin-table th{background:var(--bg-gray-100);padding:10px 13px;text-align:left;
+  font-weight:600;font-size:13px;color:var(--text-secondary);border-bottom:1px solid var(--border-default);}
+.admin-table td{padding:11px 13px;border-bottom:1px solid var(--border-default);vertical-align:middle;}
+.admin-table tr:last-child td{border-bottom:none;}
+.admin-table tr:hover td{background:#FAFCFF;}
+.badge-type{display:inline-block;padding:3px 9px;border-radius:6px;font-size:12px;font-weight:700;}
+.badge-hosp{background:#F0E8FF;color:var(--purple);}
+.badge-out{background:#FFF3E8;color:var(--orange);}
+.badge-stay{background:#EBF4FF;color:var(--blue-primary);}
+.badge-returned{background:#E6FBF3;color:#038C54;}
+.badge-pending{background:#F2F4F6;color:var(--text-secondary);}
+.pin-wrap{max-width:300px;margin:0 auto;text-align:center;padding:40px 0;}
+.pin-display{font-size:34px;letter-spacing:16px;font-weight:700;margin:16px 0;}
+.pin-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;max-width:230px;margin:0 auto;}
+.pin-btn{padding:18px;background:#fff;border:1.5px solid var(--border-default);
+  border-radius:var(--radius-md);font-size:20px;font-weight:600;cursor:pointer;}
+.pin-btn:active{transform:scale(.94);}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:500;
+  display:none;align-items:flex-end;justify-content:center;}
+.modal-overlay.active{display:flex;}
+.modal-sheet{background:#fff;border-radius:24px 24px 0 0;width:100%;max-width:480px;
+  max-height:85vh;overflow-y:auto;padding:24px 20px 36px;}
+.modal-handle{width:40px;height:4px;background:var(--border-default);border-radius:2px;margin:0 auto 20px;}
+.detail-row{display:flex;padding:9px 0;border-bottom:1px solid var(--bg-gray-100);}
+.detail-row:last-child{border-bottom:none;}
+.detail-key{font-size:13px;color:var(--text-tertiary);width:88px;flex-shrink:0;}
+.detail-val{font-size:14px;color:var(--text-primary);font-weight:500;flex:1;line-height:1.6;}
+.confirm-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:600;
+  display:none;align-items:center;justify-content:center;padding:20px;}
+.confirm-overlay.active{display:flex;}
+.confirm-box{background:#fff;border-radius:20px;padding:28px 24px;width:100%;max-width:340px;text-align:center;}
+.confirm-icon{font-size:44px;margin-bottom:12px;}
+.confirm-title{font-size:18px;font-weight:700;margin-bottom:8px;}
+.confirm-msg{font-size:14px;color:var(--text-secondary);line-height:1.8;margin-bottom:20px;}
+.confirm-btns{display:flex;gap:10px;}
+.confirm-btns button{flex:1;padding:13px;border:none;border-radius:var(--radius-md);
+  font-size:15px;font-weight:700;cursor:pointer;}
+.cf-cancel{background:var(--bg-gray-100);color:var(--text-secondary);}
+.cf-ok{background:var(--blue-primary);color:#fff;}
+.warn-box{background:#FFF8E8;border:1.5px solid #FFD166;border-radius:var(--radius-md);
+  padding:14px 16px;font-size:14px;color:#7A5200;line-height:1.7;margin-bottom:14px;}
+.warn-box strong{color:#5C3A00;}
+.toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);
+  background:#191F28;color:#fff;padding:12px 24px;border-radius:100px;
+  font-size:14px;font-weight:500;z-index:9999;opacity:0;
+  transition:opacity .3s;pointer-events:none;white-space:nowrap;}
+.toast.show{opacity:1;}
+.success-wrap{text-align:center;padding:44px 0;}
+.success-icon{font-size:60px;margin-bottom:14px;}
+@media(max-width:480px){
+  .form-row{grid-template-columns:1fr;}
+  .filter-bar input[type=text]{min-width:100%;order:-1;}
+}
+</style>
+</head>
+<body>
+
+<!-- HOME -->
+<div id="view-home" class="view active">
+  <div style="background:#fff;border-bottom:1px solid var(--border-default);
+    padding:0 20px;height:56px;display:flex;align-items:center;justify-content:space-between;">
+    <span style="font-size:15px;font-weight:700;">MG인재개발원</span>
+    <button onclick="showView('view-pin')" style="background:none;border:none;
+      cursor:pointer;font-size:13px;color:var(--text-tertiary);padding:6px 10px;">관리자 🔑</button>
+  </div>
+  <div class="container">
+    <div class="home-hero">
+      <div style="font-size:50px;margin-bottom:10px;">📋</div>
+      <h1>외출 및 외박<br>신청</h1>
+      <p style="font-size:15px;color:var(--text-secondary);margin-top:8px;">해당 항목을 선택하세요</p>
+    </div>
+    <div class="menu-card" onclick="startForm('병원약국')">
+      <div class="icon-wrap" style="background:#F0E8FF;">🏥</div>
+      <div class="info"><div class="mc-title">병원·약국 외출</div><div class="mc-desc">진료, 처방, 약 수령 등</div></div>
+      <span style="color:var(--text-tertiary);font-size:20px;margin-left:auto;">›</span>
+    </div>
+    <div class="menu-card" onclick="startForm('기타외출')">
+      <div class="icon-wrap" style="background:#FFF3E8;">🚶</div>
+      <div class="info"><div class="mc-title">기타 외출</div><div class="mc-desc">가족 행사, 관공서, 개인 업무 등</div></div>
+      <span style="color:var(--text-tertiary);font-size:20px;margin-left:auto;">›</span>
+    </div>
+    <div class="menu-card" onclick="startForm('외박')">
+      <div class="icon-wrap" style="background:#EBF4FF;">🌙</div>
+      <div class="info"><div class="mc-title">외박 신청</div><div class="mc-desc">1박 이상 숙박 후 복귀</div></div>
+      <span style="color:var(--text-tertiary);font-size:20px;margin-left:auto;">›</span>
+    </div>
+
+    <div style="display:flex;align-items:center;gap:12px;margin:6px 0;">
+      <div style="flex:1;height:1px;background:var(--border-default);"></div>
+      <span style="font-size:12px;color:var(--text-tertiary);white-space:nowrap;">복귀하셨나요?</span>
+      <div style="flex:1;height:1px;background:var(--border-default);"></div>
+    </div>
+    <div class="menu-card" onclick="showView('view-return')" style="border:2px solid #D0F5E8;background:#F6FEFA;">
+      <div class="icon-wrap" style="background:#D0F5E8;">✅</div>
+      <div class="info"><div class="mc-title" style="color:#038C54;">복귀 완료</div><div class="mc-desc">복귀 후 반드시 완료 처리하세요</div></div>
+      <span style="color:#038C54;font-size:20px;margin-left:auto;">›</span>
+    </div>
+
+    <div style="margin-top:8px;background:#FFF8E8;border:2px solid #FFD166;border-radius:var(--radius-md);
+      padding:18px 20px;text-align:center;">
+      <div style="font-size:17px;font-weight:800;color:#5C3A00;line-height:1.55;">
+        교육담당 부서의 확인 및 승인 후<br>외출, 외박이 가능합니다
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FORM -->
+<div id="view-form" class="view">
+  <div class="top-bar">
+    <button class="back-btn" onclick="showView('view-home')">←</button>
+    <span class="title" id="form-title">신청서 작성</span>
+  </div>
+  <div class="container">
+
+    <!-- STEP 1 -->
+    <div id="step1" class="step-content">
+      <div class="step-bar">
+        <div class="step-dot current">1</div>
+        <div class="step-line"></div>
+        <div class="step-dot todo">2</div>
+        <div class="step-line"></div>
+        <div class="step-dot todo">3</div>
+      </div>
+      <div class="sbadge sb-blue">👤 기본 정보</div>
+      <div class="card">
+        <div class="form-group">
+          <label class="form-label">금고명<span class="req">*</span></label>
+          <input id="f-union" class="form-input" type="text" placeholder="예) 천안중앙새마을금고"/>
+        </div>
+        <div class="form-group" style="margin-bottom:0;">
+          <label class="form-label">금고코드<span class="req">*</span> <span style="font-weight:400;color:var(--text-tertiary);">(숫자 4자리)</span></label>
+          <input id="f-code" class="form-input" type="number" placeholder="0000"
+            oninput="if(this.value.length>4)this.value=this.value.slice(0,4)"/>
+        </div>
+      </div>
+      <div class="card">
+        <div class="form-row" style="margin-bottom:16px;">
+          <div>
+            <label class="form-label">성명<span class="req">*</span></label>
+            <input id="f-name" class="form-input" type="text" placeholder="홍길동"/>
+          </div>
+          <div>
+            <label class="form-label">사원번호<span class="req">*</span></label>
+            <input id="f-empno" class="form-input" type="text" placeholder="사원번호"/>
+          </div>
+        </div>
+        <div class="form-group" style="margin-bottom:0;">
+          <label class="form-label">본인 연락처<span class="req">*</span></label>
+          <input id="f-phone" class="form-input" type="tel" placeholder="010-0000-0000"
+            oninput="this.value=this.value.replace(/[^0-9]/g,'').replace(/(\d{3})(\d{3,4})(\d{4})/,'$1-$2-$3').slice(0,13)"/>
+        </div>
+      </div>
+      <div class="card">
+        <div class="sbadge sb-gray">📞 비상연락처 <span style="font-weight:400;">(선택)</span></div>
+        <div class="form-row" style="margin-bottom:10px;">
+          <input id="f-emgname" class="form-input" type="text" placeholder="성명"/>
+          <select id="f-emgrel" class="form-select">
+            <option value="">관계</option>
+            <option>배우자</option><option>부모</option><option>자녀</option>
+            <option>형제/자매</option><option>기타</option>
+          </select>
+        </div>
+        <input id="f-emgphone" class="form-input" type="tel" placeholder="비상연락처 번호"
+          oninput="this.value=this.value.replace(/[^0-9]/g,'').replace(/(\d{3})(\d{3,4})(\d{4})/,'$1-$2-$3').slice(0,13)"/>
+      </div>
+      <button class="btn-primary" onclick="goStep(2)">다음 →</button>
+    </div>
+
+    <!-- STEP 2 -->
+    <div id="step2" class="step-content" style="display:none;">
+      <div class="step-bar">
+        <div class="step-dot done">✓</div>
+        <div class="step-line done"></div>
+        <div class="step-dot current">2</div>
+        <div class="step-line"></div>
+        <div class="step-dot todo">3</div>
+      </div>
+
+      <!-- 병원약국 -->
+      <div id="type-hosp" style="display:none;">
+        <div class="sbadge sb-purple">🏥 병원·약국 외출</div>
+        <div class="card">
+          <div class="form-group">
+            <label class="form-label">병원·약국명 또는 방문 목적<span class="req">*</span></label>
+            <input id="h-dest" class="form-input" type="text" placeholder="예) 천안충무병원 / 내과 진료 / 약국 처방 등"/>
+            <div style="font-size:12px;color:var(--text-tertiary);margin-top:5px;">
+              📍 정확한 주소를 모를 경우 목적만 입력해도 됩니다.
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">출발 일시<span class="req">*</span></label>
+            <div class="form-row">
+              <input id="h-dep-date" class="form-input" type="date"/>
+              <input id="h-dep-time" class="form-input" type="time"/>
+            </div>
+          </div>
+          <div class="form-group" style="margin-bottom:0;">
+            <label class="form-label">복귀 예정</label>
+            <div class="ret-track">
+              <div class="track-btn active" id="h-trk-u" onclick="setRetTrack('h','미정')">
+                ⏳ 미정<br><small style="font-weight:400;">진료 후 즉시 복귀</small>
+              </div>
+              <div class="track-btn" id="h-trk-d" onclick="setRetTrack('h','확정')">
+                🕐 시간 지정<br><small style="font-weight:400;">복귀 시간 예측 가능</small>
+              </div>
+            </div>
+            <div id="h-ret-inp" style="display:none;margin-bottom:8px;">
+              <div class="form-row">
+                <input id="h-ret-date" class="form-input" type="date"/>
+                <input id="h-ret-time" class="form-input" type="time"/>
+              </div>
+            </div>
+            <div id="h-ret-msg" style="background:#F2F4F6;border-radius:var(--radius-sm);padding:10px 14px;font-size:13px;color:var(--text-secondary);">
+              ⏳ 복귀 후 담당 매니저에게 즉시 연락합니다.
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="form-group" style="margin-bottom:0;">
+            <label class="form-label">이동 수단<span class="req">*</span></label>
+            <select id="h-how" class="form-select">
+              <option value="">선택하세요</option>
+              <option>자차 이용</option><option>대중교통 이용</option>
+              <option>택시 이용</option><option>도보</option><option>기타</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- 기타외출 -->
+      <div id="type-etc" style="display:none;">
+        <div class="sbadge sb-orange">🚶 기타 외출</div>
+        <div class="card">
+          <div class="form-group">
+            <label class="form-label">외출 사유<span class="req">*</span></label>
+            <select id="e-what" class="form-select" onchange="toggleOther('e-what','e-what-other')">
+              <option value="">선택하세요</option>
+              <option>가족 행사 참석 (결혼식)</option>
+              <option>가족 행사 참석 (장례식)</option>
+              <option>관공서·금융기관 방문</option>
+              <option>학교 행사 참석 (자녀 등)</option>
+              <option>개인 업무 처리</option>
+              <option>귀가 (가족 요청)</option>
+              <option>기타 (직접 입력)</option>
+            </select>
+            <input id="e-what-other" class="form-input" type="text"
+              placeholder="사유 입력" style="margin-top:8px;display:none;"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">행선지<span class="req">*</span></label>
+            <input id="e-dest" class="form-input" type="text" placeholder="예) 서울 강남 / 자택 등"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">출발 일시<span class="req">*</span></label>
+            <div class="form-row">
+              <input id="e-dep-date" class="form-input" type="date"/>
+              <input id="e-dep-time" class="form-input" type="time"/>
+            </div>
+          </div>
+          <div class="form-group" style="margin-bottom:0;">
+            <label class="form-label">복귀 예정</label>
+            <div class="ret-track">
+              <div class="track-btn active" id="e-trk-u" onclick="setRetTrack('e','미정')">
+                ⏳ 미정<br><small style="font-weight:400;">상황에 따라 달라짐</small>
+              </div>
+              <div class="track-btn" id="e-trk-d" onclick="setRetTrack('e','확정')">
+                🕐 시간 지정<br><small style="font-weight:400;">복귀 시간 예측 가능</small>
+              </div>
+            </div>
+            <div id="e-ret-inp" style="display:none;margin-bottom:8px;">
+              <div class="form-row">
+                <input id="e-ret-date" class="form-input" type="date"/>
+                <input id="e-ret-time" class="form-input" type="time"/>
+              </div>
+            </div>
+            <div id="e-ret-msg" style="background:#F2F4F6;border-radius:var(--radius-sm);padding:10px 14px;font-size:13px;color:var(--text-secondary);">
+              ⏳ 복귀 후 담당 매니저에게 즉시 연락합니다.
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="form-group" style="margin-bottom:0;">
+            <label class="form-label">이동 수단<span class="req">*</span></label>
+            <select id="e-how" class="form-select">
+              <option value="">선택하세요</option>
+              <option>자차 이용</option><option>대중교통 이용</option>
+              <option>택시 이용</option><option>도보</option><option>기타</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- 외박 -->
+      <div id="type-stay" style="display:none;">
+        <div class="sbadge sb-blue">🌙 외박 신청</div>
+        <div class="card">
+          <div class="form-group">
+            <label class="form-label">외박 사유<span class="req">*</span></label>
+            <select id="s-what" class="form-select" onchange="toggleOther('s-what','s-what-other')">
+              <option value="">선택하세요</option>
+              <option>가족 행사 참석 (결혼식)</option>
+              <option>가족 행사 참석 (장례식)</option>
+              <option>가족 질병 간호</option>
+              <option>관공서·병원 방문 (당일 복귀 불가)</option>
+              <option>귀가 (가족 요청)</option>
+              <option>기타 (직접 입력)</option>
+            </select>
+            <input id="s-what-other" class="form-input" type="text"
+              placeholder="사유 입력" style="margin-top:8px;display:none;"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">행선지·숙박 장소<span class="req">*</span></label>
+            <input id="s-dest" class="form-input" type="text" placeholder="예) 서울 자택 / 부산 부모님 댁"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">출발 일시<span class="req">*</span></label>
+            <div class="form-row">
+              <input id="s-dep-date" class="form-input" type="date"/>
+              <input id="s-dep-time" class="form-input" type="time"/>
+            </div>
+          </div>
+          <div class="form-group" style="margin-bottom:0;">
+            <label class="form-label">복귀 예정</label>
+            <div class="ret-track">
+              <div class="track-btn active" id="s-trk-u" onclick="setRetTrack('s','미정')">
+                ⏳ 미정<br><small style="font-weight:400;">확정 후 연락 예정</small>
+              </div>
+              <div class="track-btn" id="s-trk-d" onclick="setRetTrack('s','확정')">
+                📅 날짜 지정<br><small style="font-weight:400;">복귀 날짜 예측 가능</small>
+              </div>
+            </div>
+            <div id="s-ret-inp" style="display:none;margin-bottom:8px;">
+              <div class="form-row">
+                <input id="s-ret-date" class="form-input" type="date"/>
+                <input id="s-ret-time" class="form-input" type="time"/>
+              </div>
+            </div>
+            <div id="s-ret-msg" style="background:#F2F4F6;border-radius:var(--radius-sm);padding:10px 14px;font-size:13px;color:var(--text-secondary);">
+              ⏳ 복귀 일시 확정 후 담당 매니저에게 연락합니다.
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="form-group" style="margin-bottom:0;">
+            <label class="form-label">이동 수단<span class="req">*</span></label>
+            <select id="s-how" class="form-select">
+              <option value="">선택하세요</option>
+              <option>자차 이용</option><option>대중교통 이용</option>
+              <option>택시 이용</option><option>기타</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:8px;margin-top:4px;">
+        <button class="btn-secondary" style="width:80px;flex-shrink:0;" onclick="goStep(1)">← 이전</button>
+        <button class="btn-primary" onclick="goStep(3)">다음 →</button>
+      </div>
+    </div>
+
+    <!-- STEP 3 -->
+    <div id="step3" class="step-content" style="display:none;">
+      <div class="step-bar">
+        <div class="step-dot done">✓</div>
+        <div class="step-line done"></div>
+        <div class="step-dot done">✓</div>
+        <div class="step-line done"></div>
+        <div class="step-dot current">3</div>
+      </div>
+      <div class="sbadge sb-green">✅ 최종 확인</div>
+      <div class="card">
+        <div class="form-group">
+          <label class="form-label">동행자 유무</label>
+          <select id="f-companion" class="form-select" onchange="toggleCompanion()">
+            <option value="없음">없음</option><option value="있음">있음</option>
+          </select>
+        </div>
+        <div id="companion-detail" style="display:none;margin-bottom:16px;">
+          <div class="form-row">
+            <input id="f-comp-name" class="form-input" type="text" placeholder="동행자 성명"/>
+            <input id="f-comp-dept" class="form-input" type="text" placeholder="소속 금고명"/>
+          </div>
+        </div>
+        <div class="form-group" style="margin-bottom:0;">
+          <label class="form-label" id="note-label">기타 특이사항 <span style="font-weight:400;color:var(--text-tertiary);">(선택)</span></label>
+          <textarea id="f-note" class="form-textarea" placeholder="특이사항을 입력하세요 (없으면 비워두세요)"></textarea>
+        </div>
+      </div>
+      <!-- 미리보기 -->
+      <div class="card" style="background:#FAFCFF;border:1.5px solid #D6EAFF;">
+        <div style="font-size:14px;font-weight:700;color:var(--blue-primary);margin-bottom:10px;">📋 신청 내용 미리보기</div>
+        <div id="preview-box" style="font-size:14px;line-height:1.9;color:var(--text-secondary);"></div>
+      </div>
+      <!-- 경고 -->
+      <div class="warn-box">
+        <div style="font-size:15px;font-weight:700;margin-bottom:6px;color:#5C3A00;">⚠️ 반드시 확인하세요</div>
+        복귀 후 <strong>과정 진행 매니저에게 반드시 연락</strong>하여<br>
+        복귀 처리를 완료해야 합니다.<br>
+        미연락 시 무단 결석으로 처리될 수 있습니다.
+      </div>
+      <div style="display:flex;gap:8px;">
+        <button class="btn-secondary" style="width:80px;flex-shrink:0;" onclick="goStep(2)">← 이전</button>
+        <button class="btn-primary" onclick="showConfirm()">신청 제출 ✓</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- RETURN -->
+<div id="view-return" class="view">
+  <div class="top-bar">
+    <button class="back-btn" onclick="showView('view-home')">←</button>
+    <span class="title">복귀 완료 처리</span>
+  </div>
+  <div class="container">
+    <div style="text-align:center;padding:28px 0 20px;">
+      <div style="font-size:48px;margin-bottom:8px;">✅</div>
+      <div style="font-size:20px;font-weight:700;">복귀 완료 입력</div>
+      <div style="font-size:14px;color:var(--text-secondary);margin-top:6px;">신청 시 입력한 정보와 동일하게 입력하세요</div>
+    </div>
+    <div class="card">
+      <div class="form-group">
+        <label class="form-label">사원번호<span class="req">*</span></label>
+        <input id="r-empno" class="form-input" type="text" placeholder="신청 시 입력한 사원번호"/>
+      </div>
+      <div class="form-group" style="margin-bottom:0;">
+        <label class="form-label">성명<span class="req">*</span></label>
+        <input id="r-name" class="form-input" type="text" placeholder="신청 시 입력한 이름"/>
+      </div>
+    </div>
+    <div class="card">
+      <div class="form-group" style="margin-bottom:0;">
+        <label class="form-label">복귀 일시<span class="req">*</span></label>
+        <div class="form-row">
+          <input id="r-ret-date" class="form-input" type="date"/>
+          <input id="r-ret-time" class="form-input" type="time"/>
+        </div>
+      </div>
+    </div>
+    <div class="warn-box" style="background:#E6FBF3;border-color:#7DDCB8;">
+      <div style="font-size:14px;font-weight:700;color:#038C54;margin-bottom:4px;">⚠️ 복귀 처리 안내</div>
+      <span style="color:#026B42;">복귀 완료 후 <strong>과정 진행 매니저에게 반드시 연락</strong>하여<br>복귀 사실을 알려주세요.</span>
+    </div>
+    <button class="btn-primary" style="background:#038C54;" onclick="doReturn()">복귀 완료 처리 ✓</button>
+  </div>
+</div>
+
+<!-- RETURN DONE -->
+<div id="view-return-done" class="view">
+  <div class="top-bar">
+    <button class="back-btn" onclick="showView('view-home')">←</button>
+    <span class="title">복귀 완료</span>
+  </div>
+  <div class="container">
+    <div style="text-align:center;padding:50px 0 30px;">
+      <div style="font-size:60px;margin-bottom:16px;">🏠</div>
+      <div style="font-size:22px;font-weight:700;margin-bottom:8px;">
+        <span id="return-success-name"></span>님 복귀가 확인되었습니다
+      </div>
+      <div style="font-size:15px;color:var(--text-secondary);">복귀 시간: <b id="return-success-time" style="color:var(--text-primary);"></b></div>
+    </div>
+    <div class="warn-box" style="background:#E6FBF3;border-color:#7DDCB8;">
+      <span style="color:#026B42;font-size:14px;">과정 진행 매니저에게 <strong>복귀 완료 사실을 반드시 알려주세요.</strong></span>
+    </div>
+    <button class="btn-primary" style="background:#038C54;" onclick="showView('view-home')">홈으로 돌아가기</button>
+  </div>
+</div>
+
+<!-- SUCCESS -->
+<div id="view-success" class="view">
+  <div class="top-bar">
+    <button class="back-btn" onclick="showView('view-home')">←</button>
+    <span class="title">신청 완료</span>
+  </div>
+  <div class="container">
+    <div class="success-wrap">
+      <div class="success-icon">✅</div>
+      <div style="font-size:36px;font-weight:700;color:var(--blue-primary);margin:6px 0;" id="success-id"></div>
+      <div style="font-size:18px;font-weight:700;margin-bottom:8px;">신청이 완료되었습니다</div>
+      <div style="font-size:15px;color:var(--text-secondary);line-height:1.8;">
+        담당 매니저 님께<br><strong style="color:var(--text-primary);">신청 내역을 다시 알려주세요</strong>
+      </div>
+    </div>
+    <div class="warn-box">
+      <div style="font-size:15px;font-weight:700;margin-bottom:5px;color:#5C3A00;">⚠️ 복귀 후 필수 연락</div>
+      복귀 후 <strong>과정 진행 매니저에게 반드시 연락</strong>하여 복귀 처리를 완료해야 합니다.
+    </div>
+    <button class="btn-primary" onclick="showView('view-home')">홈으로 돌아가기</button>
+  </div>
+</div>
+
+<!-- PIN -->
+<div id="view-pin" class="view">
+  <div class="top-bar">
+    <button class="back-btn" onclick="showView('view-home')">←</button>
+    <span class="title">관리자 인증</span>
+  </div>
+  <div class="container">
+    <div class="pin-wrap">
+      <div style="font-size:15px;color:var(--text-secondary);">4자리 비밀번호</div>
+      <div class="pin-display" id="pin-display">••••</div>
+      <div id="pin-error" style="color:var(--red);font-size:14px;min-height:20px;margin-bottom:10px;"></div>
+      <div class="pin-grid">
+        <button class="pin-btn" onclick="pinInput('1')">1</button>
+        <button class="pin-btn" onclick="pinInput('2')">2</button>
+        <button class="pin-btn" onclick="pinInput('3')">3</button>
+        <button class="pin-btn" onclick="pinInput('4')">4</button>
+        <button class="pin-btn" onclick="pinInput('5')">5</button>
+        <button class="pin-btn" onclick="pinInput('6')">6</button>
+        <button class="pin-btn" onclick="pinInput('7')">7</button>
+        <button class="pin-btn" onclick="pinInput('8')">8</button>
+        <button class="pin-btn" onclick="pinInput('9')">9</button>
+        <button class="pin-btn" onclick="pinClear()" style="font-size:13px;color:var(--text-tertiary);">지우기</button>
+        <button class="pin-btn" onclick="pinInput('0')">0</button>
+        <button class="pin-btn" onclick="pinDelete()">⌫</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ADMIN -->
+<div id="view-admin" class="view">
+  <div class="top-bar">
+    <button class="back-btn" onclick="showView('view-home');pinClear();">←</button>
+    <span class="title">관리자 — 신청 내역</span>
+    <button onclick="exportAll()" style="margin-left:auto;background:#EBF4FF;
+      color:var(--blue-primary);border:none;border-radius:8px;padding:6px 12px;
+      font-size:13px;font-weight:600;cursor:pointer;">전체 다운 📥</button>
+  </div>
+  <div class="container-wide">
+    <div class="filter-bar">
+      <input type="text" id="admin-search" placeholder="🔍 성명·금고명 검색" oninput="renderAdmin()"/>
+      <select id="admin-type" onchange="renderAdmin()">
+        <option value="">전체</option>
+        <option value="병원약국">병원·약국</option>
+        <option value="기타외출">기타 외출</option>
+        <option value="외박">외박</option>
+      </select>
+      <input type="date" id="admin-from" onchange="renderAdmin()"/>
+      <input type="date" id="admin-to" onchange="renderAdmin()"/>
+    </div>
+    <div id="admin-stats" style="display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap;"></div>
+    <div id="admin-table-wrap"></div>
+  </div>
+</div>
+
+<!-- DETAIL MODAL -->
+<div id="modal-detail" class="modal-overlay" onclick="if(event.target===this)closeModal()">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div id="modal-content"></div>
+  </div>
+</div>
+
+<!-- CONFIRM -->
+<div id="confirm-overlay" class="confirm-overlay">
+  <div class="confirm-box">
+    <div class="confirm-icon">⚠️</div>
+    <div class="confirm-title">복귀 후 필수 연락 확인</div>
+    <div class="confirm-msg">
+      복귀 후 <strong>과정 진행 매니저에게<br>반드시 연락</strong>하여<br>
+      복귀 처리를 완료해야 합니다.<br><br>
+      확인하셨으면 제출하세요.
+    </div>
+    <div class="confirm-btns">
+      <button class="cf-cancel" onclick="closeConfirm()">다시 확인</button>
+      <button class="cf-ok" onclick="doSubmit()">확인 후 제출</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const ADMIN_PIN='2026', LS_KEY='mg_outing_v2';
+let pinValue='', currentType='병원약국';
+const retTracks={h:'미정',e:'미정',s:'미정'};
+
+function showView(id){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+  if(id==='view-admin') renderAdmin();
+  if(id==='view-return'){
+    const today=new Date().toISOString().slice(0,10);
+    const now=new Date().toTimeString().slice(0,5);
+    sv('r-ret-date',today); sv('r-ret-time',now);
+    sv('r-empno',''); sv('r-name','');
+  }
+}
+
+function doReturn(){
+  const empNo=gv('r-empno'), name=gv('r-name');
+  const retDate=gv('r-ret-date'), retTime=gv('r-ret-time');
+  if(!empNo){toast('사원번호를 입력해주세요');return;}
+  if(!name){toast('성명을 입력해주세요');return;}
+  if(!retDate||!retTime){toast('복귀 일시를 입력해주세요');return;}
+  const list=getList();
+  // 가장 최근 미복귀 건 찾기
+  const idx=list.slice().reverse().findIndex(r=>
+    r.empNo===empNo && r.name===name && !r.returnedAt
+  );
+  if(idx===-1){
+    toast('해당 신청 내역을 찾을 수 없습니다');return;
+  }
+  const realIdx=list.length-1-idx;
+  list[realIdx].returnedAt=retDate+'T'+retTime+':00';
+  list[realIdx].actualRetDate=retDate;
+  list[realIdx].actualRetTime=retTime;
+  saveList(list);
+  // 성공 화면
+  document.getElementById('return-success-name').textContent=name;
+  document.getElementById('return-success-time').textContent=fd(retDate)+' '+retTime;
+  showView('view-return-done');
+}
+
+function startForm(type){
+  currentType=type;
+  const t={병원약국:'병원·약국 외출 신청',기타외출:'기타 외출 신청',외박:'외박 신청'};
+  document.getElementById('form-title').textContent=t[type];
+  const today=new Date().toISOString().slice(0,10);
+  const now=new Date().toTimeString().slice(0,5);
+  ['h','e','s'].forEach(p=>{
+    sv(p+'-dep-date',today);sv(p+'-dep-time',now);sv(p+'-ret-date',today);sv(p+'-ret-time',now);
+    retTracks[p]='미정';
+    const u=document.getElementById(p+'-trk-u'), d=document.getElementById(p+'-trk-d');
+    const ri=document.getElementById(p+'-ret-inp'), rm=document.getElementById(p+'-ret-msg');
+    if(u){u.classList.add('active');d.classList.remove('active');}
+    if(ri){ri.style.display='none';}
+    if(rm){rm.style.display='block';}
+  });
+  goStep(1);
+  showView('view-form');
+}
+
+function sv(id,val){const el=document.getElementById(id);if(el)el.value=val;}
+function gv(id){const el=document.getElementById(id);return el?el.value.trim():'';}
+
+function setRetTrack(p,mode){
+  retTracks[p]=mode;
+  const u=document.getElementById(p+'-trk-u'), d=document.getElementById(p+'-trk-d');
+  const ri=document.getElementById(p+'-ret-inp'), rm=document.getElementById(p+'-ret-msg');
+  u.classList.toggle('active',mode==='미정');
+  d.classList.toggle('active',mode==='확정');
+  ri.style.display=mode==='미정'?'none':'block';
+  rm.style.display=mode==='미정'?'block':'none';
+}
+
+function goStep(n){
+  if(n===2&&!v1()) return;
+  if(n===3&&!v2()) return;
+  document.querySelectorAll('.step-content').forEach(el=>el.style.display='none');
+  document.getElementById('step'+n).style.display='block';
+  if(n===2){
+    document.getElementById('type-hosp').style.display=currentType==='병원약국'?'block':'none';
+    document.getElementById('type-etc').style.display=currentType==='기타외출'?'block':'none';
+    document.getElementById('type-stay').style.display=currentType==='외박'?'block':'none';
+  }
+  if(n===3){
+    buildPreview();
+    // 병원 선택 시 특이사항 힌트 변경
+    const noteEl=document.getElementById('f-note');
+    const noteLbl=document.getElementById('note-label');
+    if(currentType==='병원약국'){
+      noteEl.placeholder='현재 상태, 아픈 곳 등을 간략히 적어주세요 (없으면 비워두세요)\n※ 민감 정보이므로 관리자 외 열람 불가';
+      noteLbl.innerHTML='현재 상태 <span style="font-weight:400;color:var(--text-tertiary);">(선택 · 민감정보 보호)</span>';
+    } else {
+      noteEl.placeholder='특이사항을 입력하세요 (없으면 비워두세요)';
+      noteLbl.innerHTML='기타 특이사항 <span style="font-weight:400;color:var(--text-tertiary);">(선택)</span>';
+    }
+  }
+  window.scrollTo(0,0);
+}
+
+function v1(){
+  const checks=[['f-union','금고명'],['f-code','금고코드'],['f-name','성명'],['f-empno','사원번호'],['f-phone','연락처']];
+  for(const [id,lbl] of checks){if(!gv(id)){toast(lbl+' 을(를) 입력해주세요');document.getElementById(id).focus();return false;}}
+  if(gv('f-code').length!==4){toast('금고코드는 숫자 4자리입니다');return false;}
+  return true;
+}
+
+function v2(){
+  const p={병원약국:'h',기타외출:'e',외박:'s'}[currentType];
+  if(!gv(p+'-dep-date')||!gv(p+'-dep-time')){toast('출발 일시를 입력해주세요');return false;}
+  if(retTracks[p]==='확정'&&(!gv(p+'-ret-date')||!gv(p+'-ret-time'))){toast('복귀 예정 일시를 입력해주세요');return false;}
+  if(currentType==='병원약국'){if(!gv('h-dest')){toast('병원·약국명 또는 방문 목적을 입력해주세요');return false;}if(!gv('h-how')){toast('이동 수단을 선택해주세요');return false;}}
+  if(currentType==='기타외출'){
+    if(!gv('e-what')){toast('외출 사유를 선택해주세요');return false;}
+    if(gv('e-what')==='기타 (직접 입력)'&&!gv('e-what-other')){toast('기타 사유를 입력해주세요');return false;}
+    if(!gv('e-dest')){toast('행선지를 입력해주세요');return false;}
+    if(!gv('e-how')){toast('이동 수단을 선택해주세요');return false;}
+  }
+  if(currentType==='외박'){
+    if(!gv('s-what')){toast('외박 사유를 선택해주세요');return false;}
+    if(gv('s-what')==='기타 (직접 입력)'&&!gv('s-what-other')){toast('기타 사유를 입력해주세요');return false;}
+    if(!gv('s-dest')){toast('행선지·숙박 장소를 입력해주세요');return false;}
+    if(!gv('s-how')){toast('이동 수단을 선택해주세요');return false;}
+  }
+  return true;
+}
+
+function toggleOther(selId,inpId){
+  document.getElementById(inpId).style.display=document.getElementById(selId).value==='기타 (직접 입력)'?'block':'none';
+}
+function toggleCompanion(){
+  document.getElementById('companion-detail').style.display=gv('f-companion')==='있음'?'block':'none';
+}
+
+function collectData(){
+  let dest='',what='',how='',depDate='',depTime='',retDate='',retTime='',retTrack='미정';
+  const ft=currentType;
+  const p={병원약국:'h',기타외출:'e',외박:'s'}[ft];
+  depDate=gv(p+'-dep-date');depTime=gv(p+'-dep-time');
+  retTrack=retTracks[p];
+  if(retTrack==='확정'){retDate=gv(p+'-ret-date');retTime=gv(p+'-ret-time');}
+  if(ft==='병원약국'){dest=gv('h-dest');what='병원·약국 방문';how=gv('h-how');}
+  else if(ft==='기타외출'){what=gv('e-what')==='기타 (직접 입력)'?gv('e-what-other'):gv('e-what');dest=gv('e-dest');how=gv('e-how');}
+  else{what=gv('s-what')==='기타 (직접 입력)'?gv('s-what-other'):gv('s-what');dest=gv('s-dest');how=gv('s-how');}
+  return{id:'MG-'+Date.now(),createdAt:new Date().toISOString(),formType:ft,
+    union:gv('f-union'),code:gv('f-code'),name:gv('f-name'),empNo:gv('f-empno'),phone:gv('f-phone'),
+    emgName:gv('f-emgname'),emgRel:gv('f-emgrel'),emgPhone:gv('f-emgphone'),
+    dest,what,how,depDate,depTime,retTrack,retDate,retTime,
+    companion:gv('f-companion'),compName:gv('f-comp-name'),compDept:gv('f-comp-dept'),note:gv('f-note')};
+}
+
+function buildPreview(){
+  const r=collectData();
+  const tl={병원약국:'병원·약국 외출',기타외출:'기타 외출',외박:'외박'}[r.formType];
+  const rs=r.retTrack==='미정'?'미정 (복귀 후 매니저 연락)':`${fd(r.retDate)} ${r.retTime}`;
+  document.getElementById('preview-box').innerHTML=
+    `<b>${r.name}</b> (${r.union} · ${r.code}호) | ${tl}<br>`+
+    `사유: ${r.what}<br>행선지: ${r.dest}<br>`+
+    `출발: ${fd(r.depDate)} ${r.depTime}<br>복귀: ${rs}<br>이동: ${r.how}`;
+}
+
+const GAS_URL='https://script.google.com/macros/s/AKfycbzNNiAt-nwQ_sWg9ajYsVqu0DghcHhJcOobnY4STj0i4BNA3D_ASyenghd5XlhMLGUm7g/exec';
+
+function showConfirm(){document.getElementById('confirm-overlay').classList.add('active');}
+function closeConfirm(){document.getElementById('confirm-overlay').classList.remove('active');}
+
+async function doSubmit(){
+  closeConfirm();
+  const r=collectData();
+  const list=getList();list.push(r);saveList(list);
+  document.getElementById('success-id').textContent=r.code+'-'+r.empNo;
+  showView('view-success');
+
+  // 이메일 백그라운드 발송
+  toast('담당자에게 이메일 발송 중...');
+  try{
+    await fetch(GAS_URL,{
+      method:'POST',
+      mode:'no-cors',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(r)
+    });
+    setTimeout(()=>toast('이메일 발송 완료 ✓'),800);
+  }catch(e){
+    console.warn('이메일 발송 실패',e);
+    setTimeout(()=>toast('이메일 발송 실패 — 담당자에게 직접 알려주세요'),800);
+  }
+}
+
+function getList(){return JSON.parse(localStorage.getItem(LS_KEY)||'[]');}
+function saveList(l){localStorage.setItem(LS_KEY,JSON.stringify(l));}
+function deleteRecord(id){if(!confirm('삭제하시겠습니까?'))return;saveList(getList().filter(r=>r.id!==id));renderAdmin();toast('삭제되었습니다');}
+
+function pinInput(v){
+  if(pinValue.length>=4)return;pinValue+=v;updPin();
+  if(pinValue.length===4){setTimeout(()=>{
+    if(pinValue===ADMIN_PIN){showView('view-admin');pinClear();}
+    else{document.getElementById('pin-error').textContent='비밀번호가 틀렸습니다';pinClear();}
+  },200);}
+}
+function pinDelete(){if(pinValue.length){pinValue=pinValue.slice(0,-1);updPin();}}
+function pinClear(){pinValue='';updPin();const e=document.getElementById('pin-error');if(e)e.textContent='';}
+function updPin(){document.getElementById('pin-display').textContent='●'.repeat(pinValue.length)+'•'.repeat(4-pinValue.length);}
+
+function renderAdmin(){
+  const search=(document.getElementById('admin-search').value||'').toLowerCase();
+  const typeF=document.getElementById('admin-type').value;
+  const from=document.getElementById('admin-from').value;
+  const to=document.getElementById('admin-to').value;
+  let list=getList().filter(r=>{
+    if(search&&!r.name.toLowerCase().includes(search)&&!r.union.toLowerCase().includes(search))return false;
+    if(typeF&&r.formType!==typeF)return false;
+    if(from&&r.depDate<from)return false;
+    if(to&&r.depDate>to)return false;
+    return true;
+  }).sort((a,b)=>b.createdAt.localeCompare(a.createdAt));
+
+  const hc=list.filter(r=>r.formType==='병원약국').length;
+  const ec=list.filter(r=>r.formType==='기타외출').length;
+  const sc=list.filter(r=>r.formType==='외박').length;
+  document.getElementById('admin-stats').innerHTML=
+    `<div style="background:#fff;border-radius:10px;padding:10px 16px;box-shadow:var(--shadow-card);">
+      <span style="font-size:12px;color:var(--text-tertiary);">전체</span>
+      <span style="font-size:20px;font-weight:700;margin-left:8px;">${list.length}건</span></div>
+    <div style="background:#F0E8FF;border-radius:10px;padding:10px 16px;">
+      <span style="font-size:12px;color:var(--purple);">병원·약국</span>
+      <span style="font-size:20px;font-weight:700;color:var(--purple);margin-left:8px;">${hc}건</span></div>
+    <div style="background:#FFF3E8;border-radius:10px;padding:10px 16px;">
+      <span style="font-size:12px;color:var(--orange);">기타외출</span>
+      <span style="font-size:20px;font-weight:700;color:var(--orange);margin-left:8px;">${ec}건</span></div>
+    <div style="background:#EBF4FF;border-radius:10px;padding:10px 16px;">
+      <span style="font-size:12px;color:var(--blue-primary);">외박</span>
+      <span style="font-size:20px;font-weight:700;color:var(--blue-primary);margin-left:8px;">${sc}건</span></div>`;
+
+  if(!list.length){
+    document.getElementById('admin-table-wrap').innerHTML='<div style="text-align:center;padding:48px;color:var(--text-tertiary);background:#fff;border-radius:var(--radius-lg);">📋 신청 내역이 없습니다</div>';
+    return;
+  }
+  const tl={병원약국:'병원·약국',기타외출:'기타외출',외박:'외박'};
+  const bc={병원약국:'badge-hosp',기타외출:'badge-out',외박:'badge-stay'};
+  const rs=r=>r.retTrack==='미정'?'미정':`${fd(r.retDate)} ${r.retTime}`;
+  const rows=list.map(r=>`<tr>
+    <td style="font-size:12px;color:var(--text-tertiary);">${r.id.slice(-10)}</td>
+    <td><span class="badge-type ${bc[r.formType]}">${tl[r.formType]}</span></td>
+    <td><b>${r.name}</b><br><span style="font-size:12px;color:var(--text-tertiary);">${r.union}(${r.code})</span></td>
+    <td style="font-size:13px;">${fd(r.depDate)} ${r.depTime}</td>
+    <td style="font-size:13px;">${rs(r)}</td>
+    <td><span style="display:inline-block;padding:3px 9px;border-radius:6px;font-size:12px;font-weight:700;" class="${r.returnedAt?'badge-returned':'badge-pending'}">${r.returnedAt?'복귀완료':'신청중'}</span></td>
+    <td style="font-size:13px;max-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${r.dest}</td>
+    <td><div style="display:flex;gap:5px;flex-wrap:wrap;">
+      <button class="btn-sm btn-blue-sm" onclick="showDetail('${r.id}')">상세</button>
+      <button class="btn-sm btn-green-sm" onclick="dlWord('${r.id}')">Word📥</button>
+      <button class="btn-sm btn-red-sm" onclick="deleteRecord('${r.id}')">삭제</button>
+    </div></td></tr>`).join('');
+  document.getElementById('admin-table-wrap').innerHTML=
+    `<div class="admin-table-wrap"><table class="admin-table">
+    <thead><tr><th>신청번호</th><th>구분</th><th>신청인</th><th>출발</th><th>복귀예정</th><th>상태</th><th>행선지</th><th>관리</th></tr></thead>
+    <tbody>${rows}</tbody></table></div>`;
+}
+
+function showDetail(id){
+  const r=getList().find(x=>x.id===id);if(!r)return;
+  const tl={병원약국:'병원·약국 외출',기타외출:'기타 외출',외박:'외박'};
+  const retStr=r.retTrack==='미정'?'미정 (복귀 후 매니저 연락)':`${fd(r.retDate)} ${r.retTime}`;
+  const emg=r.emgName?`${r.emgName}(${r.emgRel}) ${r.emgPhone}`:'—';
+  const comp=r.companion==='있음'?`있음 — ${r.compName}(${r.compDept})`:'없음';
+  const rows=[
+    ['신청번호',r.id],['구분',tl[r.formType]],
+    ['금고명',`${r.union} (${r.code})`],['성명',r.name],
+    ['사원번호',r.empNo],['연락처',r.phone],['비상연락처',emg],
+    ['출발',`${fd(r.depDate)} ${r.depTime}`],['복귀예정',retStr],
+    ['행선지',r.dest],['사유',r.what],['이동수단',r.how],
+    ['동행자',comp],['기타',r.note||'—'],
+    ['신청일시',new Date(r.createdAt).toLocaleString('ko-KR')],
+  ];
+  document.getElementById('modal-content').innerHTML=
+    `<div style="font-size:17px;font-weight:700;margin-bottom:14px;">${tl[r.formType]} — ${r.name}</div>
+    ${rows.map(([k,v])=>`<div class="detail-row"><span class="detail-key">${k}</span><span class="detail-val">${v}</span></div>`).join('')}
+    <div style="display:flex;gap:8px;margin-top:20px;">
+      <button class="btn-sm btn-green-sm" style="flex:1;padding:12px;font-size:14px;" onclick="dlWord('${r.id}')">Word 다운로드 📥</button>
+      <button class="btn-sm" style="flex:1;padding:12px;background:var(--bg-gray-100);font-size:14px;" onclick="closeModal()">닫기</button>
+    </div>`;
+  document.getElementById('modal-detail').classList.add('active');
+}
+function closeModal(){document.getElementById('modal-detail').classList.remove('active');}
+
+// ── Word 생성 (인쇄용 — 참고 서식 기반 A4 꽉 채움) ──────────
+function buildDoc(r){
+  const{Document,Paragraph,TextRun,Table,TableRow,TableCell,
+    AlignmentType,WidthType,BorderStyle,HeightRule,VerticalAlign}=docx;
+
+  const SLD  = {style:BorderStyle.SINGLE,size:12,color:'000000'};
+  const SLD_S= {style:BorderStyle.SINGLE,size:6, color:'000000'};
+  const NON  = {style:BorderStyle.NONE,  size:0, color:'FFFFFF'};
+  const BD   = {top:SLD, bottom:SLD, left:SLD, right:SLD};
+  const BD_S = {top:SLD_S,bottom:SLD_S,left:SLD_S,right:SLD_S};
+  const NONE_BD={top:NON,bottom:NON,left:NON,right:NON};
+  const GRAY = {type:'solid',color:'DCDCDC',characterSpace:0};
+
+  // A4 세로: width=11906, height=16838 (twip)
+  // 여백 top/bottom 720, left/right 720 → 본문 폭 = 11906-1440 = 10466
+  const WT = 10466;
+
+  const tx =(t,o={})=>new TextRun({text:t||'',font:'맑은 고딕',size:20,...o});
+  const txB=(t,o={})=>new TextRun({text:t||'',font:'맑은 고딕',size:20,bold:true,...o});
+
+  // ─ 셀 빌더 ─
+  function labelCell(t,w,opts={}){
+    return new TableCell({
+      width:{size:w,type:WidthType.DXA},borders:BD_S,shading:GRAY,
+      verticalAlign:VerticalAlign.CENTER,
+      ...opts,
+      children:[new Paragraph({alignment:AlignmentType.CENTER,
+        children:[txB(t)]})]
+    });
+  }
+  function valueCell(t,w,opts={}){
+    return new TableCell({
+      width:{size:w,type:WidthType.DXA},borders:BD_S,
+      verticalAlign:VerticalAlign.CENTER,
+      ...opts,
+      children:[new Paragraph({alignment:AlignmentType.LEFT,
+        indent:{left:140},children:[tx(t)]})]
+    });
+  }
+  function emptyCell(w,opts={}){
+    return new TableCell({
+      width:{size:w,type:WidthType.DXA},borders:BD_S,...opts,
+      children:[new Paragraph({children:[tx('')]})]
+    });
+  }
+
+  // ─ 데이터 준비 ─
+  const tl={병원약국:'병원·약국 외출',기타외출:'기타 외출',외박:'외박'};
+  const retStr = r.retTrack==='미정'
+    ? '미정 — 복귀 즉시 담당 매니저에게 연락'
+    : `${fd(r.retDate)} ${r.retTime}`;
+  const period = `출발: ${fd(r.depDate)} ${r.depTime}\n복귀: ${retStr}`;
+  const emg  = r.emgName ? `${r.emgName} (${r.emgRel})  ${r.emgPhone}` : '—';
+  const comp = r.companion==='있음' ? `있음 — ${r.compName} (${r.compDept})` : '없음';
+  const ad   = new Date(r.createdAt);
+  const ads  = `${ad.getFullYear()}년  ${ad.getMonth()+1}월  ${ad.getDate()}일`;
+
+  // ════════════════════════════════════════════
+  // [1] 상단 헤더 테이블: 제목(좌) + 결재란(우)
+  //     WT = 10466,  결재란 폭 = 4080, 제목 폭 = 6386
+  // ════════════════════════════════════════════
+  const W_APPR = 4080; // 결재란 전체 폭
+  const W_TITL = WT - W_APPR; // 6386
+
+  // 결재란 내부 (담당자|팀 장|과 장) × 2행
+  const W_ALBL = 680;  // "결재" 레이블
+  const W_ACOL = (W_APPR - W_ALBL) / 3; // ~1133 씩
+
+  const approvalInner = new Table({
+    width:{size:W_APPR,type:WidthType.DXA},
+    rows:[
+      // 헤더행
+      new TableRow({children:[
+        new TableCell({width:{size:W_ALBL,type:WidthType.DXA},borders:BD,shading:GRAY,
+          rowSpan:2,verticalAlign:VerticalAlign.CENTER,
+          children:[new Paragraph({alignment:AlignmentType.CENTER,children:[txB('결\n재',{size:18})]})]}),
+        new TableCell({width:{size:W_ACOL,type:WidthType.DXA},borders:BD,shading:GRAY,
+          children:[new Paragraph({alignment:AlignmentType.CENTER,children:[txB('담당자',{size:18})]})]}),
+        new TableCell({width:{size:W_ACOL,type:WidthType.DXA},borders:BD,shading:GRAY,
+          children:[new Paragraph({alignment:AlignmentType.CENTER,children:[txB('팀  장',{size:18})]})]}),
+        new TableCell({width:{size:W_ACOL,type:WidthType.DXA},borders:BD,shading:GRAY,
+          children:[new Paragraph({alignment:AlignmentType.CENTER,children:[txB('과  장',{size:18})]})]}),
+      ]}),
+      // 서명행
+      new TableRow({
+        height:{value:1300,rule:HeightRule.EXACT},
+        children:[
+          emptyCell(W_ACOL,{borders:BD}),
+          emptyCell(W_ACOL,{borders:BD}),
+          emptyCell(W_ACOL,{borders:BD}),
+        ]
+      }),
+    ]
+  });
+
+  // 헤더 테이블: 제목(좌) | 결재란(우)
+  const headerTable = new Table({
+    width:{size:WT,type:WidthType.DXA},
+    rows:[new TableRow({children:[
+      // 제목 셀 (테두리 없음)
+      new TableCell({
+        width:{size:W_TITL,type:WidthType.DXA},
+        borders:NONE_BD,
+        verticalAlign:VerticalAlign.CENTER,
+        children:[
+          new Paragraph({spacing:{before:0,after:0},children:[tx('')]}),
+          new Paragraph({
+            alignment:AlignmentType.LEFT,
+            spacing:{before:0,after:0},
+            children:[txB('외출 · 외박  신청서',{size:56})]
+          }),
+        ]
+      }),
+      // 결재란 셀 (테두리 없음, 내부 테이블 삽입)
+      new TableCell({
+        width:{size:W_APPR,type:WidthType.DXA},
+        borders:NONE_BD,
+        verticalAlign:VerticalAlign.CENTER,
+        children:[approvalInner]
+      }),
+    ]})]
+  });
+
+  // ════════════════════════════════════════════
+  // [2] 신청 문구 박스 (테두리 있는 한 행)
+  // ════════════════════════════════════════════
+  const requestBox = new Table({
+    width:{size:WT,type:WidthType.DXA},
+    rows:[new TableRow({
+      height:{value:600,rule:HeightRule.ATLEAST},
+      children:[new TableCell({
+        width:{size:WT,type:WidthType.DXA},borders:BD,
+        verticalAlign:VerticalAlign.CENTER,
+        children:[new Paragraph({
+          alignment:AlignmentType.CENTER,
+          children:[tx('아래와 같이 외출·외박을 신청하오니 허락하여 주시기 바랍니다.',{size:22})]
+        })]
+      })]
+    })]
+  });
+
+  // ════════════════════════════════════════════
+  // [3] 본문 메인 테이블 (4컬럼: 레이블|값|레이블|값)
+  //     각 행 높이 균등하게 A4 채우기
+  //     레이블 폭 WL=1500, 값 폭 WV = (WT - WL*2) / 2 = (10466-3000)/2 = 3733
+  // ════════════════════════════════════════════
+  const WL = 1500, WV = (WT - WL*2) / 2; // WV = 3733
+  const RH = 1380; // 행 높이 (균등)
+
+  function row4(l1,v1,l2,v2){
+    return new TableRow({height:{value:RH,rule:HeightRule.ATLEAST},children:[
+      labelCell(l1,WL), valueCell(v1,WV),
+      labelCell(l2,WL), valueCell(v2,WV),
+    ]});
+  }
+  function rowWide(l,v,h=RH){
+    return new TableRow({height:{value:h,rule:HeightRule.ATLEAST},children:[
+      labelCell(l,WL),
+      new TableCell({width:{size:WT-WL,type:WidthType.DXA},borders:BD_S,
+        columnSpan:3,verticalAlign:VerticalAlign.CENTER,
+        children:[new Paragraph({alignment:AlignmentType.LEFT,
+          indent:{left:140},children:[tx(v)]})]
+      }),
+    ]});
+  }
+  function rowWideMulti(l,lines,h=RH){
+    // 줄바꿈이 필요한 경우 (시간 등)
+    return new TableRow({height:{value:h,rule:HeightRule.ATLEAST},children:[
+      labelCell(l,WL),
+      new TableCell({width:{size:WT-WL,type:WidthType.DXA},borders:BD_S,
+        columnSpan:3,verticalAlign:VerticalAlign.CENTER,
+        children:lines.map(ln=>new Paragraph({alignment:AlignmentType.LEFT,
+          indent:{left:140},children:[tx(ln)]}))
+      }),
+    ]});
+  }
+
+  const mainTable = new Table({
+    width:{size:WT,type:WidthType.DXA},
+    rows:[
+      row4('훈련과정','',        '신청구분', tl[r.formType]||''),
+      row4('소    속', r.union,  '교    번', r.code),
+      row4('성    명', r.name,   '사원번호', r.empNo),
+      rowWideMulti('시    간',
+        [`출발: ${fd(r.depDate)} ${r.depTime}`,
+         `복귀: ${retStr}`], RH*1.6),
+      rowWide('행  선  지', r.dest),
+      rowWide('사    유',   r.what),
+      row4('이동수단',  r.how,  '연    락',  r.phone),
+      row4('동  행  자', comp,  '비상연락',  emg),
+      rowWide('기 타 사 항', r.note||'—', RH*1.4),
+    ]
+  });
+
+  // ════════════════════════════════════════════
+  // [4] 날짜 + 서명 + 복귀 안내
+  // ════════════════════════════════════════════
+  return new Document({sections:[{
+    properties:{page:{
+      margin:{top:720,right:720,bottom:720,left:720},
+      size:{width:11906,height:16838}
+    }},
+    children:[
+      // 규정 표기
+      new Paragraph({spacing:{after:80},
+        children:[tx('■ MG인재개발원 교육훈련 규정 [외출·외박 신청 서식]',{size:15,color:'666666'})]}),
+
+      headerTable,
+
+      new Paragraph({spacing:{before:120,after:120},children:[tx('')]}),
+
+      requestBox,
+      mainTable,
+
+      // 날짜
+      new Paragraph({alignment:AlignmentType.CENTER,spacing:{before:300,after:120},
+        children:[txB(ads,{size:24})]}),
+
+      // 서명
+      new Paragraph({alignment:AlignmentType.CENTER,spacing:{after:300},
+        children:[tx('신청인 :    '+r.name+'                        (인)',{size:24})]}),
+
+      // 복귀 필수 안내
+      new Table({
+        width:{size:WT,type:WidthType.DXA},
+        rows:[new TableRow({children:[new TableCell({
+          width:{size:WT,type:WidthType.DXA},borders:BD,
+          shading:{type:'solid',color:'FFF3CD',characterSpace:0},
+          children:[new Paragraph({alignment:AlignmentType.CENTER,spacing:{before:80,after:80},
+            children:[txB('▶ 복귀 후 반드시 과정 진행 매니저에게 연락하여 복귀 처리를 완료하십시오.',{size:18,color:'7A3B00'})]})]
+        })})]})
+      }),
+
+      // 신청번호
+      new Paragraph({alignment:AlignmentType.RIGHT,spacing:{before:60},
+        children:[tx(`신청번호: ${r.code}-${r.empNo}    MG인재개발원`,{size:15,color:'AAAAAA'})]}),
+    ]
+  }]});
+}
+
+async function dlWord(id){
+  const r=getList().find(x=>x.id===id);if(!r){toast('내역을 찾을 수 없습니다');return;}
+  toast('Word 생성 중...');
+  try{
+    const blob=await docx.Packer.toBlob(buildDoc(r));
+    const a=Object.assign(document.createElement('a'),{
+      href:URL.createObjectURL(blob),download:`외출외박신청서_${r.name}_${r.depDate}.docx`});
+    a.click();URL.revokeObjectURL(a.href);toast('다운로드 완료 ✓');
+  }catch(e){console.error(e);toast('오류 발생 — 콘솔 확인');}
+}
+
+async function exportAll(){
+  const search=(document.getElementById('admin-search').value||'').toLowerCase();
+  const typeF=document.getElementById('admin-type').value;
+  const from=document.getElementById('admin-from').value;
+  const to=document.getElementById('admin-to').value;
+  const list=getList().filter(r=>{
+    if(search&&!r.name.toLowerCase().includes(search)&&!r.union.toLowerCase().includes(search))return false;
+    if(typeF&&r.formType!==typeF)return false;
+    if(from&&r.depDate<from)return false;
+    if(to&&r.depDate>to)return false;
+    return true;
+  });
+  if(!list.length){toast('해당 내역이 없습니다');return;}
+  toast(`${list.length}건 다운로드 중...`);
+  for(const r of list){await dlWord(r.id);await new Promise(res=>setTimeout(res,380));}
+}
+
+function fd(d){if(!d)return'미정';const[y,m,dd]=d.split('-');return`${y}년 ${m}월 ${dd}일`;}
+function toast(msg){
+  const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');
+  clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),2400);
+}
+</script>
+</body>
+</html>
